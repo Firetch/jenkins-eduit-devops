@@ -13,11 +13,24 @@ pipeline {
                 echo 'Stage Init'
             }
         }
-        stage('Test') {
-            steps {
-                echo 'Stage Test'
+        parallel {
+            stage('Unit Test') {
+                steps {
+                    echo 'Stage Test'
+                }
+            }
+            stage('Functional Test') {
+                steps {
+                    echo 'Stage Test'
+                }
+            }
+            stage('Coverage Test') {
+                steps {
+                    echo 'Stage Test'
+                }
             }
         }
+
         stage('Build') {
             steps {
                 echo 'Stage Build'
