@@ -22,14 +22,14 @@ pipeline {
             steps {
                 echo 'Stage Build'
                 sh 'docker build -t ${APPNAME}:${BUILD_NUMBER} .'
-                sh 'docker tag ${APPNAME}:${BUILD_NUMBER} ${REGISTRY}/${APP_NAME}:${BUILD_NUMBER}'
+                sh 'docker tag ${APPNAME}:${BUILD_NUMBER} ${REGISTRY}/${APPNAME}:${BUILD_NUMBER}'
             }
         }
         stage('Push to Registry') {
             steps {
                 echo 'Stage Push'
                 sh 'docker login --username=$DOCKER_HUB_LOGIN_USR --password=$DOCKER_HUB_LOGIN_PSW'
-                sh 'docker push ${REGISTRY}/${APP_NAME}:${BUILD_NUMBER}'
+                sh 'docker push ${REGISTRY}/${APPNAME}:${BUILD_NUMBER}'
                 
             }
         }
