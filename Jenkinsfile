@@ -33,14 +33,38 @@ pipeline {
             }
         }
 
-
-        stage('Build') {
-            steps {
-                echo 'Stage Build'
-                sh 'docker build -t ${APPNAME}:${BUILD_NUMBER} .'
-                sh 'docker tag ${APPNAME}:${BUILD_NUMBER} ${REGISTRY}/${APPNAME}:${BUILD_NUMBER}'
+        stage ('SECURITY SAST') {
+            parallel {
+                stage('SonarQ') {
+                    steps {
+                        echo 'Stage Test'
+                    }
+                }
+                stage('Snyk') {
+                    steps {
+                        echo 'Stage Test'
+                    }
+                }
             }
         }
+
+        stage('Build') {
+            parallel {
+                stage('Build') {
+                    steps {
+                        echo 'Stage Build'
+                        sh 'docker build -t ${APPNAME}:${BUILD_NUMBER} .'
+                        sh 'docker tag ${APPNAME}:${BUILD_NUMBER} ${REGISTRY}/${APPNAME}:${BUILD_NUMBER}'
+                    }
+                }
+                stage('Trivy Scan') {
+                    steps {
+                        echo 'Stage Test'
+                    }
+                }
+            }
+        }
+
         stage('Push to Registry') {
             steps {
                 echo 'Stage Push'
@@ -50,6 +74,7 @@ pipeline {
                 
             }
         }
+
         stage('Deploy') {
             steps {
                 echo 'Stage Deploy'
@@ -68,6 +93,12 @@ pipeline {
                 echo 'Stage Notify'
                 sh 'curl -s -X POST https://api.telegram.org/bot5881753165:AAEjB95ZRDUW0kRMCzMA7C1yjpHemiGTpiM/sendMessage -d chat_id=-1001508340482 -d disable_web_page_preview=True -d text="Deploy Proyecto:$JOB_NAME *$BUILD_NUMBER*" -d parse_mode=markdown'
             }
+        }
+
+        stage ('SECURITY DAST') {
+             steps {
+                echo 'Stage Test'
+                }
         }
     }
 }
