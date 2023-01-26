@@ -37,9 +37,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Stage Deploy'
-                sh 'touch prueba.txt'
+                sh ("sed -i -- 's/REGISTRY/$REGISTRY/g' docker-compose.yml")
+                sh ("sed -i -- 's/APPNAME/$APPNAME/g' docker-compose.yml")
+                sh ("sed -i -- 's/TAG/$BUILD_NUMBER/g' docker-compose.yml")
                 sshagent(['ssh-ec2']){
-                 sh 'scp -o StrictHostKeyChecking=no prueba.txt ${EC2INSTANCE}:/home/ec2-user' 
+                 sh 'scp -o StrictHostKeyChecking=no docker-compose.yml ${EC2INSTANCE}:/home/ec2-user' 
+                 sh 'ssh ${EC2INSTANCE} ls -lrt'
+                 sh 'ssh ${EC2INSTANCE} docker-compose up -d'
                 }
             }
         }
