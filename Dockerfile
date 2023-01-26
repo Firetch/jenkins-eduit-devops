@@ -1,6 +1,8 @@
-FROM python:3.10.8-alpine
-WORKDIR /usr/src/app
-COPY . /usr/src/app
-RUN pip install -r requirements.txt
-EXPOSE 5000
-CMD [ "python", "./app.py" ]
+FROM node:16-alpine
+WORKDIR /app
+LABEL project="docker-bootcamp"
+LABEL owner="Rossana"
+COPY ./ /app/
+RUN npm install
+EXPOSE 4000
+CMD ["npm","start"]
